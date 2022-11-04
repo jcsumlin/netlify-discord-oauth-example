@@ -1,0 +1,15 @@
+[build]
+publish = "build"
+functions = "./functions/"
+
+[build.processing]
+html = { pretty_urls = true }
+images = { compress = true }
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[template.environment]
+DISCORD_CLIENT_ID= "Your Discord Application Client ID"
+DISCORD_CLIENT_SECRET= "Your Discord Application Client Secret"
