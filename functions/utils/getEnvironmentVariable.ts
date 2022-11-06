@@ -1,9 +1,9 @@
 const getEnvironmentVariable = (name: string) => {
-    let value = process.env[name]
-    if (!value) {
-        throw ("missing env var for " + name);
-    }
-    return value;
+  const value = process.env[name]
+  if (!value) {
+    throw Error('missing env var for ' + name)
+  }
+  return value
 }
 
-export default getEnvironmentVariable;
+export default getEnvironmentVariable

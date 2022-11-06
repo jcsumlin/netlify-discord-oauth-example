@@ -1,48 +1,59 @@
-import {builder, Handler} from '@netlify/functions'
+import { Handler } from '@netlify/functions'
+import axios from 'axios'
+import { BASE_URL, CALLBACK_URL } from './utils/discord-oauth'
+import cookie from 'cookie'
 import config from './config.json'
-import oauth from "./utils/discord-oauth";
+import getEnvironmentVariable from './utils/getEnvironmentVariable'
 
-const cookie = require('cookie')
-
-const myHandler: Handler = async (event, context) => {
-    if (!event.rawUrl) {
-        return {
-            statusCode: 401,
-            body: JSON.stringify({message: 'Hello World', event})
+const handler: Handler = async (event, context) => {
+  const clientId = getEnvironmentVariable('DISCORD_CLIENT_ID')
+  const clientSecret = getEnvironmentVariable('DISCORD_CLIENT_SECRET')
+  if (event.queryStringParameters !== null && 'code' in event.queryStringParameters) {
+    try {
+      const { data } = await axios.post(`${BASE_URL}/oauth2/token`,
+        {
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: 'authorization_code',
+          code: event.queryStringParameters.code,
+          redirect_uri: CALLBACK_URL
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }
-    }
-    const params = new URLSearchParams(event.rawQuery)
-    const code = params.get("code")
-    if (!code) {
-        return {
-            statusCode: 401
-        }
-    }
-    console.warn(params)
-    const data = await oauth.tokenRequest({
-        clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        scope: ["identify"],
-        grantType: 'authorization_code',
-        code,
-    })
-    const tokenCookie = cookie.serialize('discord_token', data.access_token, {
+      )
+      const token = cookie.serialize('discord_token', data.access_token, {
         httpOnly: true,
+        secure: true,
+        path: '/',
         maxAge: data.expires_in
-    })
-    const refreshCookie = cookie.serialize('discord_refresh', data.refresh_token, {
-        httpOnly: true
-    })
-    return {
+      })
+      const refresh = cookie.serialize('discord_refresh', data.refresh_token, {
+        httpOnly: true,
+        path: '/'
+      })
+      return {
         statusCode: 302,
         multiValueHeaders: {
-            'Set-Cookie': [tokenCookie, refreshCookie],
+          'Set-Cookie': [token, refresh]
         },
         headers: {
-            'Location': config.url
+          Location: config.url,
+          'Cache-Control': 'no-cache'
         }
+      }
+    } catch (e: unknown) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: e })
+      }
     }
+  }
+  return {
+    statusCode: 500
+  }
 }
 
-const handler = builder(myHandler)
-
-export {handler}
+export { handler }
