@@ -22,13 +22,13 @@ function App (): JSX.Element {
         </pre>
           <a
             className="App-link"
-            href="http://localhost:8888/.netlify/functions/login"
+            href="/.netlify/functions/login"
           >
             Login
           </a>
-          <a className="App-link" href={'http://localhost:8888/.netlify/functions/me'}>Get User</a>
-          <a className="App-link" href={'http://localhost:8888/.netlify/functions/logout'}>Logout</a>
-          <a className="App-link" href={'http://localhost:8888/.netlify/functions/refresh'}>Refresh</a>
+          <a className="App-link" href={'/.netlify/functions/me'}>Get User</a>
+          <a className="App-link" href={'/.netlify/functions/logout'}>Logout</a>
+          <a className="App-link" href={'/.netlify/functions/refresh'}>Refresh</a>
         </header>
       </div>
   )

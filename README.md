@@ -2,6 +2,8 @@
 
 This is an example project that uses the Netlify serverless functions and discord oauth2. Examples for login, logout, refresh, and get logged in user have been added.
 
+[![](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/jcsumlin/netlify-discord-oauth-example)
+
 ## How to run this locally
 
 This should be very easy to get set up on your own thanks to Netlify CLI.
