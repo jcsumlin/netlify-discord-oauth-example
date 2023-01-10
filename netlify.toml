@@ -13,3 +13,7 @@ status = 200
 [template.environment]
 DISCORD_CLIENT_ID= "Your Discord Application Client ID"
 DISCORD_CLIENT_SECRET= "Your Discord Application Client Secret"
+AWS_ACCESS_KEY_ID= "AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY= "AWS_SECRET_ACCESS_KEY"
+AWS_DEFAULT_REGION= "us-east-1"
+JWT_SECRET_KEY= "Random string"

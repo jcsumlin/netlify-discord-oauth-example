@@ -1,6 +1,6 @@
-const getEnvironmentVariable = (name: string) => {
+const getEnvironmentVariable = (name: string): string => {
   const value = process.env[name]
-  if (!value) {
+  if (value == null) {
     throw Error('missing env var for ' + name)
   }
   return value

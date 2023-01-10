@@ -1,6 +1,5 @@
 interface Cookies {
-  discord_token: string
-  discord_refresh: string
+  DiscordAuth: string
 }
 
 const parseCookie = (cookies: string): Cookies => {

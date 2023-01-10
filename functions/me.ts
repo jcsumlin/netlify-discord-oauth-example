@@ -1,22 +1,13 @@
 import { builder, Handler } from '@netlify/functions'
-import axios from 'axios'
-import { BASE_URL } from './utils/discord-oauth'
+import { getUserInformation } from './utils/discord-oauth'
 import parseCookie from './utils/parseCookie'
+import { verifyAndDecode } from './utils/jwt'
 
 const myHandler: Handler = async (event, context) => {
-  if (!event.headers.cookie) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: 'Not logged in' })
-    }
-  }
-  const cookies = parseCookie(event.headers.cookie)
+  const cookies = parseCookie(event.headers.cookie as string)
   try {
-    const { data } = await axios.get(`${BASE_URL}/oauth2/@me`, {
-      headers: {
-        Authorization: `Bearer ${cookies.discord_token}`
-      }
-    })
+    const discordCookie = verifyAndDecode(cookies.DiscordAuth)
+    const data = await getUserInformation(discordCookie.access_token)
     return {
       statusCode: 200,
       body: JSON.stringify(data)
