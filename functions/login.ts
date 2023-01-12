@@ -1,9 +1,9 @@
-import { Handler } from '@netlify/functions'
+import { builder, Handler } from '@netlify/functions'
 import { CALLBACK_URL, SCOPE } from './utils/discord-oauth'
 import crypto from 'crypto'
 import getEnvironmentVariable from './utils/getEnvironmentVariable'
 
-const handler: Handler = async (event, context) => {
+const myHandler: Handler = async () => {
   const clientId = getEnvironmentVariable('DISCORD_CLIENT_ID')
   const OAuthData = new URLSearchParams({
     response_type: 'code',
@@ -14,12 +14,14 @@ const handler: Handler = async (event, context) => {
   })
 
   return {
-    statusCode: 302,
-    headers: {
-      Location: `https://discordapp.com/oauth2/authorize?${OAuthData}`,
-      'Cache-Control': 'no-cache'
-    }
+    statusCode: 200,
+    body: JSON.stringify({
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      url: `https://discordapp.com/oauth2/authorize?${OAuthData}`
+    })
   }
 }
+
+const handler = builder(myHandler)
 
 export { handler }

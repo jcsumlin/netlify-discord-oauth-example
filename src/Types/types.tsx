@@ -8,4 +8,5 @@ export interface GameServerStatus {
   status: InstanceStateName
   instanceType: InstanceType
   gameName: string
+  publicIp: string
 }

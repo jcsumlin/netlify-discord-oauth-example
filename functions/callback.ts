@@ -4,7 +4,7 @@ import cookie from 'cookie'
 import config from './config.json'
 import { sign } from './utils/jwt'
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async (event) => {
   if (event.queryStringParameters !== null && 'code' in event.queryStringParameters) {
     try {
       const data = await validateToken(event.queryStringParameters.code as string)
@@ -19,7 +19,7 @@ const handler: Handler = async (event, context) => {
       return {
         statusCode: 302,
         headers: {
-          Location: config.url + '/dashboard',
+          Location: config.url + '/authorize',
           'Set-Cookie': discordCookie,
           'Cache-Control': 'no-cache'
         }

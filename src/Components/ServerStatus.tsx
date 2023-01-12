@@ -1,13 +1,15 @@
 import React, { FunctionComponent, ReactNode } from 'react'
 import { InstanceStateName } from 'aws-sdk/clients/ec2'
-import { Button, Chip, Paper } from '@mui/material'
+import { Card, CardActions, CardContent, CardMedia, Chip, Typography } from '@mui/material'
 import { upperFirst } from 'lodash'
 import { startServer } from '../utils/api'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 interface OwnProps {
   instanceId: string
   gameName: string
   serverStatus: InstanceStateName
+  publicIp: string
 }
 
 type Props = OwnProps
@@ -37,12 +39,13 @@ const ServerStatus: FunctionComponent<Props> = (props) => {
         color = 'error'
         break
       case 'stopping':
+      case 'pending':
         color = 'warning'
         break
       default:
         color = 'default'
     }
-    return <Chip label={upperFirst(status)} color={color} />
+    return <Chip label={upperFirst(status)} color={color} className={'my-3'} />
   }
 
   const startGameServer = (id: string): void => {
@@ -50,18 +53,35 @@ const ServerStatus: FunctionComponent<Props> = (props) => {
       .then(() => setLoading(true))
       .catch(console.error)
   }
+  const loadingStatuses = ['pending', 'stopping', 'shutting-down']
+
   return (
-    <Paper elevation={3} className={'block'}>
-        <img src={getGameIcon(props.gameName)} width={250} />
-        <h1>{props.gameName}</h1>
-        {getStatus(props.serverStatus)}
-        <Button
-            variant={'contained'}
-            onClick={() => startGameServer(props.instanceId)}
-            disabled={props.serverStatus === 'running' || loading}>
-          Start Server
-        </Button>
-    </Paper>
+      <Card sx={{ maxWidth: 345 }}>
+        <CardMedia
+            sx={{ height: 140 }}
+            image={getGameIcon(props.gameName)}
+            title={props.gameName}
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {props.gameName}
+          </Typography>
+          {getStatus(props.serverStatus)}
+          <Chip label={props.publicIp}/>
+        </CardContent>
+        <CardActions>
+          <LoadingButton
+              variant={'contained'}
+              color="success"
+              disabled={props.serverStatus === 'running'}
+              onClick={() => startGameServer(props.instanceId)}
+              loading={loadingStatuses.includes(props.serverStatus) || loading}
+              classes={'!mb-3'}
+          >
+            Start Server
+          </LoadingButton>
+        </CardActions>
+      </Card>
   )
 }
 

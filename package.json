@@ -6,29 +6,28 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@middy/core": "^4.0.10",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.115",
     "@mui/material": "^5.11.4",
     "@netlify/functions": "^1.3.0",
     "@reactivers/hooks": "^1.0.14",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1290.0",
     "axios": "^1.1.3",
     "discord-api-types": "^0.37.26",
-    "js-cookie": "^3.0.1",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
+    "react-use-auth": "^2.1.0-14",
     "typescript": "*",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "node main.js && react-scripts build",
+    "build": "node main.js && sh setup.sh && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -62,6 +61,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-react": "^7.31.10"
+    "eslint-plugin-react": "^7.31.10",
+    "tailwindcss": "^3.2.4"
   }
 }

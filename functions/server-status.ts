@@ -15,8 +15,9 @@ interface GameServerStatus {
   status: InstanceStateName
   instanceType: InstanceType
   gameName: string
+  publicIp: string
 }
-const myHandler: Handler = async (event, context) => {
+const myHandler: Handler = async () => {
   const gameServers: GameServerStatus[] = []
   const params: DescribeInstanceStatusRequest = {
     InstanceIds: ['i-0d38b2393e703a0e5', 'i-0009b47703519709d', 'i-05c313a670f5ec822']
@@ -25,13 +26,14 @@ const myHandler: Handler = async (event, context) => {
   if (data.Reservations != null) {
     data.Reservations.forEach(({ Instances }) => {
       if (Instances != null) {
-        const { State, InstanceType, Tags, InstanceId } = Instances[0]
+        const { State, InstanceType, Tags, InstanceId, PublicIpAddress } = Instances[0]
         const gameName = Tags?.filter(tag => tag.Key === 'Name')[0]
         const server: GameServerStatus = {
           instanceId: InstanceId ?? '',
           gameName: gameName?.Value ?? 'Unknown Game',
           instanceType: InstanceType ?? '',
-          status: State?.Name ?? ''
+          status: State?.Name ?? '',
+          publicIp: PublicIpAddress ?? ''
         }
         gameServers.push(server)
       }
@@ -39,7 +41,7 @@ const myHandler: Handler = async (event, context) => {
   }
   return {
     statusCode: 200,
-    body: JSON.stringify({ gameServers, rawData: data })
+    body: JSON.stringify({ gameServers })
   }
 }
 

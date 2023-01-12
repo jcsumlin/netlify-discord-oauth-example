@@ -30,10 +30,28 @@ const getLogin = async () => {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const postLogout = async () => {
+  return await client.post(ENDPOINTS.logout)
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const startServer = async (instanceId: string) => {
   return await client.post(ENDPOINTS.startServer, {
     instanceId
   })
+}
+
+const doLogin = (): void => {
+  getLogin()
+    .then(({ data }) => {
+      window.location.href = data.url
+    })
+    .catch(console.error)
+}
+
+const doLogout = (): void => {
+  postLogout()
+    .catch(console.error)
 }
 
 // Add a request interceptor
@@ -56,4 +74,4 @@ client.interceptors.response.use(function (response) {
   return await Promise.reject(error)
 })
 
-export { getUser, getServers, getLogin, startServer, ENDPOINTS }
+export { getUser, getServers, getLogin, startServer, ENDPOINTS, doLogin, doLogout }

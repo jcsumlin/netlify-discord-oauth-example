@@ -5,8 +5,11 @@ import App from './App'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ErrorPage from './Pages/ErrorPage'
 import AuthenticatedPage from './Pages/AuthenticatedPage'
-import { CssBaseline } from '@mui/material'
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import GlobalWrapper from './Components/GlobalWrapper'
+import Authorize from './Pages/Authorize'
+import { AuthProvider, LocalStorageProvider } from '@reactivers/hooks'
+import PrivateRoute from './Components/PrivateRoute'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -22,20 +25,43 @@ const router = createBrowserRouter([
         element: <App/>
       },
       {
-        path: '/dashboard',
-        element: <AuthenticatedPage/>
+        element: <PrivateRoute/>,
+        children: [
+          {
+            path: '/dashboard',
+            element: <AuthenticatedPage/>
+          }
+        ]
+      },
+      {
+        path: '/authorize',
+        element: <Authorize/>
       }
     ]
-  },
-  {
-    path: '/dashboard',
-    element: <AuthenticatedPage/>
   }
 ])
 
+const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        h1 {
+          color: grey;
+        }
+      `
+    }
+  }
+})
+
 root.render(
   <React.StrictMode>
-      <CssBaseline />
-      <RouterProvider router={router} />
+    <ThemeProvider theme={theme}>
+      <LocalStorageProvider>
+        <AuthProvider>
+          <CssBaseline />
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </LocalStorageProvider>
+    </ThemeProvider>
   </React.StrictMode>
 )

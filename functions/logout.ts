@@ -1,25 +1,27 @@
-import { builder, Handler } from '@netlify/functions'
+import { Handler } from '@netlify/functions'
 import parseCookie from './utils/parseCookie'
 import axios from 'axios'
-import { BASE_URL, CALLBACK_URL } from './utils/discord-oauth'
+import { BASE_URL } from './utils/discord-oauth'
 import cookie from 'cookie'
 import getEnvironmentVariable from './utils/getEnvironmentVariable'
+import config from './config.json'
+import { verifyAndDecode } from './utils/jwt'
+import middy from '@middy/core'
+import middleware from './middleware/auth'
 
-const myHandler: Handler = async (event, context) => {
-  if (!event.headers.cookie) {
-    return {
-      statusCode: 500
-    }
-  }
-  const cookies = parseCookie(event.headers.cookie)
+const logout: Handler = async (event) => {
+  const cookies = parseCookie(event.headers.cookie as string)
   const clientId = getEnvironmentVariable('DISCORD_CLIENT_ID')
   const clientSecret = getEnvironmentVariable('DISCORD_CLIENT_SECRET')
+
   try {
-    const { data } = await axios.post(`${BASE_URL}/oauth2/token/revoke`,
+    const discordCookie = verifyAndDecode(cookies.DiscordAuth)
+
+    await axios.post(`${BASE_URL}/oauth2/token/revoke`,
       {
         client_id: clientId,
         client_secret: clientSecret,
-        token: cookies.discord_token
+        token: discordCookie.access_token
       },
       {
         headers: {
@@ -28,23 +30,18 @@ const myHandler: Handler = async (event, context) => {
       }
     )
 
-    const token = cookie.serialize('discord_token', '', {
-      httpOnly: true,
-      secure: true,
-      path: '/',
-      maxAge: 0
-    })
-    const refresh = cookie.serialize('discord_refresh', '', {
+    const expiredToken = cookie.serialize('DiscordAuth', '', {
       httpOnly: true,
       secure: true,
       path: '/',
       maxAge: 0
     })
     return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Successfully logged out', data }),
-      multiValueHeaders: {
-        'Set-Cookie': [token, refresh]
+      statusCode: 302,
+      headers: {
+        Location: config.url,
+        'Set-Cookie': expiredToken,
+        'Cache-Control': 'no-cache'
       }
     }
   } catch (e) {
@@ -55,6 +52,7 @@ const myHandler: Handler = async (event, context) => {
   }
 }
 
-const handler = builder(myHandler)
+const handler = middy(logout)
+  .use(middleware())
 
 export { handler }
