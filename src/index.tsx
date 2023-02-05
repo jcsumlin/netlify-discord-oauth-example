@@ -10,6 +10,8 @@ import GlobalWrapper from './Components/GlobalWrapper'
 import Authorize from './Pages/Authorize'
 import { AuthProvider, LocalStorageProvider } from '@reactivers/hooks'
 import PrivateRoute from './Components/PrivateRoute'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
         element: <App/>
       },
       {
+        path: '/authorize',
+        element: <Authorize/>
+      },
+      {
+        path: '/unauthorized',
+        element: <ErrorPage message={'You are not authenticated!'} />
+      },
+      {
         element: <PrivateRoute/>,
         children: [
           {
@@ -32,10 +42,6 @@ const router = createBrowserRouter([
             element: <AuthenticatedPage/>
           }
         ]
-      },
-      {
-        path: '/authorize',
-        element: <Authorize/>
       }
     ]
   }
@@ -62,6 +68,7 @@ root.render(
           <RouterProvider router={router} />
         </AuthProvider>
       </LocalStorageProvider>
+      <ToastContainer position="top-left" theme="colored"/>
     </ThemeProvider>
   </React.StrictMode>
 )

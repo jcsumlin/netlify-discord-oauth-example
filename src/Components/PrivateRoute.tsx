@@ -3,6 +3,7 @@ import { useAuth } from '@reactivers/hooks'
 import { Outlet } from 'react-router-dom'
 import { doLogout, getLogin, getUser } from '../utils/api'
 import Login from './Login'
+import Loading from './Loading'
 
 const PrivateRoute: FunctionComponent = () => {
   const { token, isLoggedIn, login, logout } = useAuth()
@@ -41,7 +42,7 @@ const PrivateRoute: FunctionComponent = () => {
     if (isLoggedIn) {
       return <Outlet />
     } else {
-      return <p>Loading....</p>
+      return <Loading/>
     }
   } else {
     if (isLoggedIn) {

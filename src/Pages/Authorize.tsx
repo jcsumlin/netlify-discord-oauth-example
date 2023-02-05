@@ -2,6 +2,8 @@ import React, { FunctionComponent, useEffect } from 'react'
 import { getUser } from '../utils/api'
 import { useAuth } from '@reactivers/hooks'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Loading from '../Components/Loading'
 
 const Authorize: FunctionComponent = () => {
   const {
@@ -20,7 +22,9 @@ const Authorize: FunctionComponent = () => {
           userInfo: data.user
         }
         login(userInfo)
-      }).catch(console.error)
+      }).catch(() => {
+        toast.error('You are not authorized, please login')
+      })
   }, [])
 
   useEffect(() => {
@@ -30,7 +34,7 @@ const Authorize: FunctionComponent = () => {
   }, [isLoggedIn, user])
 
   return (
-    <>Authorizing...</>
+    <Loading message={'Authorizing...'}/>
   )
 }
 

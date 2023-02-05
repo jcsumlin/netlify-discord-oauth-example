@@ -1,10 +1,18 @@
 import React, { FunctionComponent } from 'react'
+import { Button } from '@mui/material'
 
-const ErrorPage: FunctionComponent = () => {
+interface Props {
+  message?: string
+}
+const ErrorPage: FunctionComponent<Props> = ({ message }: Props) => {
+  if (message == null) {
+    message = 'Sorry, an unexpected error has occurred.'
+  }
   return (
-        <div id="error-page">
+        <div className="grid place-content-center text-center">
             <h1>Oops!</h1>
-            <p>Sorry, an unexpected error has occurred.</p>
+            <p>{message}</p>
+            <Button variant={'contained'} href={'/'}>Go Home</Button>
         </div>
   )
 }
