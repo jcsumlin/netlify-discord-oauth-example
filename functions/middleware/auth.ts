@@ -18,8 +18,6 @@ const middleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxy
     try {
       const cookies = parseCookie(event.headers.cookie)
       const { userId } = verifyAndDecode(cookies.DiscordAuth)
-      console.log('userId', userId)
-
       if (userId != null) {
         if (!allowedUsers.user_ids.includes(userId)) {
           return {
